@@ -108,7 +108,7 @@ enum FotCommand: String, CaseIterable, Identifiable {
     }
 }
 
-struct FotView: View {
+struct FotScreen: View {
     @State private var lpClass: LPClass = .klasse1
     @State private var duration: Int = LPClass.klasse1.recommendedFootMinutes
     @State private var isEditing = false
@@ -261,5 +261,5 @@ struct FotView: View {
 }
 
 #Preview {
-        FotView()
+        FotScreen()
 }

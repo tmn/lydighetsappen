@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-struct TestCommands: View {
+struct TestCommandsScreen: View {
     @State private var audioCommand = AudioCommand()
     
     var body: some View {
@@ -45,5 +45,5 @@ struct TestCommands: View {
 }
 
 #Preview {
-    TestCommands()
+    TestCommandsScreen()
 }

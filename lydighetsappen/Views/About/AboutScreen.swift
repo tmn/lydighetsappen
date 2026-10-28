@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-struct AboutView: View {
+struct AboutScreen: View {
     let appVersion: String
 
     init () {
@@ -32,6 +32,6 @@ struct AboutView: View {
 
 #Preview {
     NavigationStack {
-        AboutView()
+        AboutScreen()
     }
 }

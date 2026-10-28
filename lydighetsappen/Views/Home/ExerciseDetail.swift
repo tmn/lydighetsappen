@@ -16,7 +16,6 @@ struct ExerciseDetail: View {
         List {
             Section {
                 summaryCard
-                    // Litt luft rundt kortet, ellers klipper listeraden hjørnene og kanten.
                     .listRowInsets(EdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6))
                     .listRowBackground(Color.clear)
             }

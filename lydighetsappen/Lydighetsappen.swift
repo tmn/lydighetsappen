@@ -12,7 +12,7 @@ import SwiftUI
 @main struct Lydighetsappen: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainScreen()
         }
     }
 }

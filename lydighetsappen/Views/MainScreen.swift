@@ -9,11 +9,11 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct MainScreen: View {
     var body: some View {
         TabView {
             Tab {
-                HomeView()
+                HomeScreen()
             } label: {
                 Label {
                     Text("Hjem")
@@ -23,11 +23,11 @@ struct ContentView: View {
             }
 
             Tab("Fot", systemImage: "pawprint") {
-                FotView()
+                FotScreen()
             }
             
             Tab {
-                BrowseView()
+                BrowseScreen()
             } label: {
                 Label {
                     Text("Utforsk")
@@ -53,5 +53,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    MainScreen()
 }

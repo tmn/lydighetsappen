@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-struct HelpAndSupportView: View {
+struct HelpAndSupportScreen: View {
     var body: some View {
         List {
             Section {
@@ -46,6 +46,6 @@ struct HelpAndSupportView: View {
 
 #Preview {
     NavigationStack {
-        HelpAndSupportView()
+        HelpAndSupportScreen()
     }
 }

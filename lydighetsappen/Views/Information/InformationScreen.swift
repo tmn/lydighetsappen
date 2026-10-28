@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-struct InformationView: View {
+struct InformationScreen: View {
     var body: some View {
         NavigationStack {
             List {
@@ -25,12 +25,12 @@ struct InformationView: View {
                 
                 Section {
                     NavigationLink {
-                        HelpAndSupportView()
+                        HelpAndSupportScreen()
                     } label: {
                         Label("Hjelp og support", systemImage: "questionmark.circle.fill")
                     }
                     NavigationLink {
-                        AboutView()
+                        AboutScreen()
                     } label: {
                         Label("Om", systemImage: "info.circle.fill")
                     }
@@ -47,5 +47,5 @@ struct InformationView: View {
 }
 
 #Preview {
-    InformationView()
+    InformationScreen()
 }

@@ -9,13 +9,13 @@
 
 import SwiftUI
 
-struct BrowseView: View {
+struct BrowseScreen: View {
     var body: some View {
         NavigationStack {
             List {
                 Section {
                     NavigationLink {
-                        InformationView()
+                        InformationScreen()
                     } label: {
                         Label("Informasjon", systemImage: "info.circle.fill")
                     }
@@ -23,7 +23,7 @@ struct BrowseView: View {
                 
                 Section {
                     NavigationLink {
-                        TestCommands()
+                        TestCommandsScreen()
                     } label: {
                         Label("Test av kommandoer", systemImage: "speaker.wave.2")
                     }
@@ -39,5 +39,5 @@ struct BrowseView: View {
 }
 
 #Preview {
-    BrowseView()
+    BrowseScreen()
 }

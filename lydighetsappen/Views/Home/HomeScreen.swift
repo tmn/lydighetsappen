@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-struct HomeView: View {
+struct HomeScreen: View {
     var body: some View {
         NavigationStack {
             List {
@@ -17,12 +17,7 @@ struct HomeView: View {
                     
                 } header: {
                     VStack(alignment: .leading) {
-//                        Text("Klasser")
-//                            .textCase(.uppercase)
-//                            .font(.footnote)
-//                            .foregroundStyle(.tint)
                         Text("Velg en klasse")
-//                            .font(.subheadline)
                             .fontWeight(.bold)
                             .textCase(.uppercase)
                         Text("Se beskrivelser og øvelser fra alle kalsser.")
@@ -51,5 +46,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    HomeScreen()
 }

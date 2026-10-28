@@ -16,7 +16,11 @@ struct TestCommands: View {
         NavigationStack {
             List {
                 Section {
-                    Text("Teste lydkommandoer")
+                    
+                } header: {
+                    Text("Her kan du teste lydkommandoer.")
+                        .listRowInsets(EdgeInsets())
+                        .font(.subheadline)
                 }
                 ForEach(FotCommand.allCases, id: \.rawValue) { item in
                     Button {

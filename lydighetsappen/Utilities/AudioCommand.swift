@@ -20,7 +20,7 @@ final class AudioCommand: NSObject, AVSpeechSynthesizerDelegate {
     /// Den best tilgjengelige norske stemmen på enheten.
     let voice: AVSpeechSynthesisVoice?
     
-    /// Sant hvis enheten har en forbedret eller premium norsk stemme installert.
+    /// Sant hvis enheten har en forbedret eller prremium norsk stemme installert.
     /// Standardstemmen låter mest robotaktig, så brukeren kan oppfordres til å laste ned en bedre.
     var hasEnhancedVoice: Bool {
         guard let voice else { return false }

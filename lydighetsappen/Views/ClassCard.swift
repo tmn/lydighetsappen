@@ -20,13 +20,11 @@ extension LPClass {
     }
 }
 
-/// Kort som presenterer en klasse på hjemskjermen.
 struct ClassCard: View {
     let lpClass: LPClass
 
     var body: some View {
         HStack(alignment: .top, spacing: 14) {
-            
             VStack(alignment: .leading, spacing: 10) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(lpClass.title)
@@ -44,17 +42,7 @@ struct ClassCard: View {
             }
 
             Spacer(minLength: 0)
-
-            Image(systemName: "chevron.right")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(.tertiary)
-                .frame(maxHeight: .infinity)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
 
     private func chip(_ text: String, systemImage: String) -> some View {
@@ -64,15 +52,21 @@ struct ClassCard: View {
             .padding(.vertical, 4)
             .background(lpClass.accentColor.opacity(0.12), in: Capsule())
             .foregroundStyle(lpClass.accentColor)
+            .labelIconToTitleSpacing(2)
     }
 }
 
 #Preview {
-    ScrollView {
-        VStack(spacing: 16) {
-            ForEach(LPClass.allCases) { ClassCard(lpClass: $0) }
+    NavigationStack {
+        List(LPClass.allCases) { lpClass in
+            Section {
+                NavigationLink {
+                    ExerciseOverview(lpClass: lpClass)
+                } label: {
+                    ClassCard(lpClass: lpClass)
+                }
+            }
         }
-        .padding()
+        .listSectionSpacing(.compact)
     }
-    .background(Color(.systemGroupedBackground))
 }

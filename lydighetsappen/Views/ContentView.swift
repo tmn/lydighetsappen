@@ -13,35 +13,21 @@ struct ContentView: View {
     var body: some View {
         TabView {
             Tab("Hjem", systemImage: "square.grid.2x2") {
-                NavigationStack {
-                    ScrollView {
-                        LazyVStack(spacing: 16) {
-                            ForEach(LPClass.allCases) { lpClass in
-                                NavigationLink {
-                                    ExerciseOverview(lpClass: lpClass)
-                                } label: {
-                                    ClassCard(lpClass: lpClass)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                        .padding(.horizontal)
-                        .padding(.bottom)
-                    }
-                    .background(Color(.systemGroupedBackground))
-                    .navigationTitle("Lydighetsappen")
-                    .navigationBarTitleDisplayMode(.large)
-                }
-                
+                HomeView()
+    
             }
             
             Tab("Fot", systemImage: "pawprint") {
                 FotView()
             }
             
-            Tab("Kommandoer", systemImage: "pawprint") {
-                TestCommands()
+            Tab("Utforsk", systemImage: "square.grid.2x2.fill") {
+                BrowseView()
             }
+            
+//            Tab("Kommandoer", systemImage: "pawprint") {
+//                TestCommands()
+//            }
         }
     }
 }

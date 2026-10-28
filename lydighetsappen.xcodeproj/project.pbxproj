@@ -8,11 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		A6473F523092326D0085BE3B /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = A6473F513092326D0085BE3B /* LICENSE */; };
+		A6790C253092A2CE00CEE2E3 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A6790C243092A2CE00CEE2E3 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* lydighetsappen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = lydighetsappen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6473F513092326D0085BE3B /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		A6790C243092A2CE00CEE2E3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -37,6 +39,7 @@
 			children = (
 				A6473F513092326D0085BE3B /* LICENSE */,
 				000000000000000000000010 /* lydighetsappen */,
+				A6790C243092A2CE00CEE2E3 /* README.md */,
 				000000000000000000000020 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,6 +111,7 @@
 		000000000000000140000000 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
+				A6790C253092A2CE00CEE2E3 /* README.md in Resources */,
 				A6473F523092326D0085BE3B /* LICENSE in Resources */,
 			);
 		};

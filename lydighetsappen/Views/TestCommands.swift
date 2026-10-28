@@ -1,8 +1,10 @@
 //
-//  TestCommands.swift
-//  lydighetsappen
+// This file is a part of the Lydighetsappen project
 //
-//  Created by Tri Nguyen on 22/10/2026.
+// Copyright (c) 2026 the Lydighetsappen authors
+// Licensed under Apache License 2.0
+//
+// See LICENSE.txt for license information
 //
 
 import SwiftUI
@@ -13,10 +15,13 @@ struct TestCommands: View {
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    Text("Teste lydkommandoer")
+                }
                 ForEach(FotCommand.allCases, id: \.rawValue) { item in
                     Button {
                         Task {
-                            audioCommand.say("\(item.title)")
+                            audioCommand.say(item.spokenText)
                         }
                     } label: {
                         Text("\(item.title)")

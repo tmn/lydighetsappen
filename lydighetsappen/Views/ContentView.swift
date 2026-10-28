@@ -12,23 +12,43 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         TabView {
-            Tab("Hjem", systemImage: "square.grid.2x2") {
+            Tab {
                 HomeView()
-    
+            } label: {
+                Label {
+                    Text("Hjem")
+                } icon: {
+                    Image(uiImage: Self.outlineTabImage("text.rectangle.page"))
+                }
             }
-            
+
             Tab("Fot", systemImage: "pawprint") {
                 FotView()
             }
             
-            Tab("Utforsk", systemImage: "square.grid.2x2.fill") {
+            Tab {
                 BrowseView()
+            } label: {
+                Label {
+                    Text("Utforsk")
+                } icon: {
+                    Image(uiImage: Self.outlineTabImage("square.grid.2x2"))
+
+                }
             }
-            
-//            Tab("Kommandoer", systemImage: "pawprint") {
-//                TestCommands()
-//            }
         }
+    }
+
+    private static func outlineTabImage(_ name: String) -> UIImage {
+        let configuration = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
+        guard let symbol = UIImage(systemName: name, withConfiguration: configuration)?
+            .withTintColor(.black, renderingMode: .alwaysOriginal) else {
+            return UIImage()
+        }
+        let bitmap = UIGraphicsImageRenderer(size: symbol.size).image { _ in
+            symbol.draw(at: .zero)
+        }
+        return bitmap.withRenderingMode(.alwaysTemplate)
     }
 }
 

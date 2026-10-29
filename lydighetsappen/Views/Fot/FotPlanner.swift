@@ -10,7 +10,6 @@
 import Foundation
 
 extension FotCommand {
-    /// Required commands - a session cannot exist without these
     var isRequired: Bool {
         switch self {
         case .forwardMarch, .normalMarch, .halt: true
@@ -18,7 +17,6 @@ extension FotCommand {
         }
     }
 
-    /// Kommandoer som gjør at ekvipasjen står stille etter at de er utført, og hunden skal sette seg.
     var endsInHalt: Bool {
         switch self {
         case .halt, .leftTurnAndHalt, .rightTurnAndHalt, .aboutTurnAndHalt: true
@@ -26,7 +24,6 @@ extension FotCommand {
         }
     }
 
-    /// Kommandoer som krever at ekvipasjen står i utgangsstilling.
     var isStationaryMovement: Bool {
         switch self {
         case .twoStepForward, .twoStepBackward, .twoStepLeft, .twoStepRight, .walkBackward, .walkBackwardLong: true
@@ -48,7 +45,6 @@ extension FotCommand {
         }
     }
 
-    /// Forhåndsvalgte kommandoer for en klasse.
     static func preset(for lpClass: LPClass) -> Set<FotCommand> {
         // Klasse 1: vendinger og holdt i vanlig marsj. Sakte marsj og springmarsj uten vendinger og holdt.
         var commands: Set<FotCommand> = [
@@ -60,7 +56,6 @@ extension FotCommand {
         case .klasse1:
             break
         case .klasse2:
-            // Holdt kan komme som følge av en vending, og forflytninger på 2 skritt framover og bakover.
             commands.formUnion([.leftTurnAndHalt, .rightTurnAndHalt, .aboutTurnAndHalt])
             commands.formUnion([.twoStepForward, .twoStepBackward])
         case .klasse3:
@@ -76,11 +71,9 @@ extension FotCommand {
     }
 }
 
-/// En kommando i en økt, med pausen som følger etter at den er lest opp.
 struct FotStep: Identifiable {
     let id = UUID()
     let command: FotCommand
-    /// Sekunder fra opplesingen er ferdig til neste kommando.
     let pause: TimeInterval
 }
 
@@ -90,7 +83,6 @@ struct FotPlanner {
     }
 
     enum State: Equatable {
-        /// Ekvipasjen står i utgangsstilling.
         case halted
         case marching(Gait)
     }
@@ -98,7 +90,6 @@ struct FotPlanner {
     let lpClass: LPClass
     let commands: Set<FotCommand>
 
-    /// Tid det tar å lese opp en kommando. Brukes bare til å anslå økta lengde.
     private let spokenDuration: TimeInterval = 1.2
 
     init(lpClass: LPClass, commands: Set<FotCommand>) {
@@ -106,13 +97,14 @@ struct FotPlanner {
         self.commands = commands.union(FotCommand.allCases.filter(\.isRequired))
     }
 
-    /// Vendinger på stedet (ved holdt) forekommer i klasse 3 og FCI 3.
     private var allowsTurnsOnSpot: Bool {
         lpClass == .klasse3 || lpClass == .fci3
     }
 
-    /// Kommandoer som kan komme etter `previous` i gitt tilstand.
-    func legalCommands(after previous: FotCommand?, state: State) -> [FotCommand] {
+    static let maxGaitChangesOfEachKind = 2
+
+    func legalCommands(state: State, history: [FotCommand] = []) -> [FotCommand] {
+        let previous = history.last
         let candidates: [FotCommand]
         switch state {
         case .halted:
@@ -137,8 +129,25 @@ struct FotPlanner {
             }
         }
         
-        // Samme kommando skal ikke komme to ganger etter hverandre.
-        return candidates.filter { commands.contains($0) && $0 != previous }
+        return candidates.filter {
+            commands.contains($0) && $0 != previous && allowsGaitChange($0, history: history)
+        }
+    }
+
+    // Maks to av hver av sakte marsj og springmarsj, og flere vendinger enn gangartsskifter.
+    private func allowsGaitChange(_ command: FotCommand, history: [FotCommand]) -> Bool {
+        guard command == .slowMarch || command == .runMarch else { return true }
+
+        let sameKind = history.filter { $0 == command }.count
+        guard sameKind < Self.maxGaitChangesOfEachKind else { return false }
+
+        let canTurn = commands.contains { $0.isTurn || $0.isTurnAndHalt }
+        if canTurn {
+            let turns = history.filter { $0.isTurn || $0.isTurnAndHalt }.count
+            let gaitChanges = history.filter { $0 == .slowMarch || $0 == .runMarch }.count
+            return turns >= gaitChanges + 2
+        }
+        return true
     }
 
     func state(after command: FotCommand, from state: State) -> State {
@@ -152,7 +161,6 @@ struct FotPlanner {
         }
     }
 
-    /// Pausen etter at `command` er lest opp, før neste kommando kommer.
     func pause(
         after command: FotCommand,
         base: TimeInterval,
@@ -162,7 +170,6 @@ struct FotPlanner {
             return TimeInterval.random(in: 1.0...2.0, using: &generator)
         }
         if command.isStationaryMovement {
-            // Noen få skritt på stedet tar ikke lang tid, men baklengs gange tar lengre.
             let isBackwardWalk = command == .walkBackward || command == .walkBackwardLong
             let factor = isBackwardWalk ? 1.0...1.5 : 0.5...0.9
             return max(3, base * Double.random(in: factor, using: &generator))
@@ -170,7 +177,6 @@ struct FotPlanner {
         return max(2.5, base * Double.random(in: 0.6...1.4, using: &generator))
     }
 
-    /// Lager en plan som varer omtrent `duration` sekunder... `pauseBase` er tempoet, i sekunder mellom hver kommando.
     func plan(
         duration: TimeInterval,
         pauseBase: TimeInterval,
@@ -187,8 +193,19 @@ struct FotPlanner {
             elapsed += spokenDuration + pause
         }
 
+        var gaitQuota: [FotCommand: Int] = [:]
+        for gait in [FotCommand.slowMarch, .runMarch] {
+            let wantsTwo = Double.random(in: 0..<1, using: &generator) < 0.2
+            gaitQuota[gait] = wantsTwo ? Self.maxGaitChangesOfEachKind : 1
+        }
+
         while elapsed < duration {
-            let options = legalCommands(after: result.last?.command, state: state)
+            let history = result.map(\.command)
+            var options = legalCommands(state: state, history: history)
+
+            for (gait, quota) in gaitQuota where history.filter({ $0 == gait }).count >= quota {
+                options.removeAll { $0 == gait }
+            }
             guard let next = pick(from: options, state: state, using: &generator) else { break }
             append(next)
         }
@@ -210,8 +227,6 @@ struct FotPlanner {
         state: State,
         using generator: inout some RandomNumberGenerator
     ) -> FotCommand? {
-        // Når ekvipasjen står stille bør halvparten av kommandoene være å gå videre,
-        // ellers blir økta full av forflytninger på stedet.
         if state == .halted, options.contains(.forwardMarch), options.count > 1, Bool.random(using: &generator) {
             return .forwardMarch
         }

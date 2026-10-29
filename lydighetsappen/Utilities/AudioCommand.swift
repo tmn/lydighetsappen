@@ -31,11 +31,23 @@ final class AudioCommand: NSObject, AVSpeechSynthesizerDelegate {
         voice = Self.bestNorwegianVoice()
         super.init()
         synth.delegate = self
-        
-        Task.detached(priority: .userInitiated) {
+    }
+
+    @ObservationIgnored private var activeSpeechCount = 0
+
+    private func beginSpeaking() {
+        if activeSpeechCount == 0 {
             let session = AVAudioSession.sharedInstance()
             try? session.setCategory(.playback, options: [.duckOthers])
             try? session.setActive(true)
+        }
+        activeSpeechCount += 1
+    }
+
+    private func endSpeaking() {
+        activeSpeechCount = max(0, activeSpeechCount - 1)
+        if activeSpeechCount == 0 {
+            try? AVAudioSession.sharedInstance().setActive(false, options: [.notifyOthersOnDeactivation])
         }
     }
     
@@ -56,12 +68,14 @@ final class AudioCommand: NSObject, AVSpeechSynthesizerDelegate {
     }
     
     func say(_ text: String) {
+        beginSpeaking()
         synth.speak(makeUtterance(text))
     }
     
     /// Leser opp teksten og returnerer når opplesingen er ferdig (eller avbrutt).
     func speak(_ text: String) async {
         let utterance = makeUtterance(text)
+        beginSpeaking()
         await withCheckedContinuation { continuation in
             continuations[ObjectIdentifier(utterance)] = continuation
             synth.speak(utterance)
@@ -74,6 +88,7 @@ final class AudioCommand: NSObject, AVSpeechSynthesizerDelegate {
     }
     
     private func finish(_ id: ObjectIdentifier) {
+        endSpeaking()
         continuations.removeValue(forKey: id)?.resume()
     }
     

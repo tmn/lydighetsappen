@@ -37,10 +37,11 @@ struct ExerciseDetail: View {
                             .foregroundStyle(.secondary)
                         VStack(alignment: .leading, spacing: 2) {
                             if step.isOrdered {
-                                Label("På ordre", systemImage: "megaphone")
+                                Text(step.orderLabel)
                                     .font(.caption.weight(.semibold))
                                     .foregroundStyle(.tint)
                             }
+
                             Text(step.text)
                         }
                     }
@@ -48,7 +49,7 @@ struct ExerciseDetail: View {
             } header: {
                 Text("Slik utføres øvelsen")
             } footer: {
-                Text("«På ordre» betyr at konkurranselederen gir beskjed før du gjør handlingen. Vent på ordren. Konkurranselederen gir beskjed i alle faser av øvelsen, også der regelteksten ikke sier det uttrykkelig.")
+                Text("«På ordre» betyr at konkurranselederen gir beskjed før du gjør handlingen. Vent på ordren om konkurranseleder ikke har sagt noe annet.")
             }
             
             Section("Dommeren legger vekt på") {
@@ -96,6 +97,6 @@ struct ExerciseDetail: View {
 
 #Preview {
     NavigationStack {
-        ExerciseDetail(exercise: LPClass.klasse1.exercises[2])
+        ExerciseDetail(exercise: LPClass.klasse2.exercises[6])
     }
 }

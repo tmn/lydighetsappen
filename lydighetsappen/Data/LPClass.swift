@@ -12,9 +12,17 @@ import Foundation
 struct LPStep: Hashable {
     let text: String
     let isOrdered: Bool
+    var order: String? = nil
 
-    static func order(_ text: String) -> LPStep { LPStep(text: text, isOrdered: true) }
+    static func order(_ text: String, order: String? = nil) -> LPStep { LPStep(text: text, isOrdered: true, order: order) }
     static func info(_ text: String) -> LPStep { LPStep(text: text, isOrdered: false) }
+}
+
+extension LPStep {
+    var orderLabel: String {
+        guard let order else  { return "På ordre" }
+        return "På ordre: \"\(order)\""
+    }
 }
 
 struct LPExercise: Identifiable, Hashable {
@@ -127,7 +135,7 @@ enum LPContent {
             steps: [
                 .info("Hunden sitter i utgangsstilling."),
                 .info("Dommeren stiller seg foran ekvipasjen og spør om dere er klare."),
-                .info("Du svarer at dere er klare og kommanderer «bli»."),
+                .info("Du gir tegn om at du er klar og kommanderer «bli»."),
                 .info("Dommeren kontrollerer tilgjengeligheten ved å berøre hundens snuteparti.")
             ],
             judging: [
@@ -139,16 +147,16 @@ enum LPContent {
         LPExercise(
             number: "1.2", title: "Fellesdekk 1 minutt", coefficient: 5,
             summary: "Flere hunder ligger i dekk samtidig mens førerne står synlige i 1 minutt.",
-            commands: ["Dekk", "Bli", "Utgangsstilling"],
+            commands: ["Dekk", "(Bli)", "Utgangsstilling"],
             steps: [
                 .info("Førerne stiller på linje med ca. 4 meter mellom ekvipasjene. Hundene sitter i utgangsstilling."),
-                .order("Du kommanderer «dekk»."),
-                .order("Du kommanderer «bli» og forlater hunden. Gå ca. 5 meter."),
-                .order("Du gjør helt om og holdt, vendt mot hunden."),
+                .order("Du kommanderer «dekk».", order: "Kommander hunden"),
+                .order("Du kommanderer «bli» og forlater hunden. Gå ca. 5 meter.", order: "Kommander og gå fra"),
+                .order("Du gjør helt om og holdt på anvist plass, vendt mot hunden.", order: "Helt om og holdt"),
                 .info("Du står vendt mot hunden i 1 minutt. Tiden starter når alle førerne står vendt mot hundene."),
-                .order("Du går tilbake og gjør helt om og holdt ca. 2 skritt bak hunden."),
-                .order("Du går inntil hunden."),
-                .order("Du kommanderer «utgangsstilling»."),
+                .order("Du går tilbake og gjør helt om og holdt ca. 2 skritt bak hunden.", order: "To skritt bak hunden"),
+                .order("Du går inntil hunden.", order: "Inntil hunden"),
+                .order("Du kommanderer til utgangsstilling.", order: "Kommander utgangsstilling"),
                 .info("Etter «øvelsen slutt» forholder du deg i ro til du får annen beskjed.")
             ],
             judging: [
@@ -160,13 +168,12 @@ enum LPContent {
         ),
         LPExercise(
             number: "1.3", title: "Lineføring", coefficient: 4,
-            summary: "Eneste øvelse med line. Hunden følger villig på din venstre side i fritt hengende line.",
+            summary: "Hunden følger villig på din venstre side i fritt hengende line.",
             commands: ["Fot"],
             steps: [
-                .info("Start i utgangsstilling. Linen holdes i valgfri hånd og henger fritt."),
-                .order("Du kommanderer «fot» og går vanlig marsj. «Fot» er tillatt fra holdt og ved forandring av gangart."),
-                .order("Du gjør vendinger og holdt i vanlig marsj."),
-                .order("Du går sakte marsj og springmarsj. Disse gjøres uten holdt og vendinger."),
+                .info("Start på anvist plass med hunden i utgangsstilling. Linen holdes i valgfri hånd og henger fritt."),
+                .order("Du kommanderer «fot» og går vanlig marsj. «Fot» er tillatt fra holdt og ved forandring av gangart.", order: "Fremmad marsj"),
+                .order("Du gjør vendinger og holdt i vanlig marsj. Sakte marsj og springmars gjøres uten holdt og vendinger."),
                 .info("Når du gjør holdt, skal hunden raskt innta utgangsstilling uten kommando."),
                 .info("Anbefalt tid: ca. 1 minutt.")
             ],
@@ -181,14 +188,14 @@ enum LPContent {
             summary: "Hunden legger seg på kommando etter holdt, og blir liggende mens du går fra og tilbake.",
             commands: ["Fot", "Dekk", "Utgangsstilling"],
             steps: [
-                .info("Start i utgangsstilling."),
-                .order("Du kommanderer «fot» og går ca. 10 meter."),
-                .order("Du gjør holdt. Hunden skal innta utgangsstilling uten kommando."),
-                .order("Du kommanderer «dekk»."),
-                .order("Du går ca. 10 meter fra hunden og gjør helt om og holdt."),
-                .order("Du går tilbake og passerer hunden på dens venstre side, ca. 0,5 meter unna og ca. 2 skritt bak hunden."),
-                .order("Du gjør helt om og marsj, og holdt inntil hunden."),
-                .order("Du kommanderer «utgangsstilling».")
+                .info("Start på anvist plass med hunden i utgangsstilling."),
+                .order("Du kommanderer «fot» og går ca. 10 meter.", order: "Fremmad marsj"),
+                .order("Du gjør holdt. Hunden skal innta utgangsstilling uten kommando.", order: "Gjør holdt"),
+                .order("Du kommanderer «dekk». Når hunden er i dekk, går du ca 10 meter fra hunden.", order: "Kommander og gå fra"),
+                .order("Du går ca. 10 meter fra hunden og gjør helt om og holdt.", order: "Helt om og holdt"),
+                .order("Du går tilbake og passerer hunden på dens venstre side, ca. 0,5 meter unna og ca. 2 skritt bak hunden. Gjør helt om og holdt.", order: "To skritt bak hunden"),
+                .order("Gå inntil hunden.", order: "Inntil hunden"),
+                .order("Du kommanderer «utgangsstilling».", order: "Kommander utgangsstilling")
             ],
             judging: [
                 "Dekk er hovedmomentet: hvor villig hunden legger seg og blir liggende.",
@@ -203,10 +210,10 @@ enum LPContent {
             commands: ["Bli", "Kom"],
             steps: [
                 .info("Start på anvist plass med hunden i utgangsstilling."),
-                .order("Du kommanderer «bli»."),
-                .order("Du går ca. 15 meter fra hunden."),
-                .order("Du gjør helt om og holdt."),
-                .order("Du kaller inn hunden til utgangsstilling («kom»).")
+                .order("Du kommanderer «bli».", order: "Kommander"),
+                .order("Du går ca. 15 meter fra hunden.", order: "Gå fra"),
+                .order("Du gjør helt om og holdt.", order: "Helt om og holdt"),
+                .order("Du kaller inn hunden til utgangsstilling.", order: "Kall inn")
             ],
             judging: [
                 "Hunden skal komme villig, i god fart og velge korteste vei.",
@@ -216,12 +223,11 @@ enum LPContent {
         ),
         LPExercise(
             number: "1.6", title: "Fremadsending med stå", coefficient: 4,
-            summary: "Du sender hunden inn i en rute og stopper den der med «stå».",
+            summary: "Du sender hunden inn i en rute og stopper den der med «stå». Ruta er ca. 3×3 meter, markert med kjegle i hvert hjørne, og ligger ca. 10 meter fra start.",
             commands: ["Fremad", "Stå"],
             steps: [
-                .info("Ruta er ca. 3×3 meter, markert med kjegle i hvert hjørne, og ligger ca. 10 meter fra start."),
-                .info("Hunden står i utgangsstilling med fronten mot en av sidene på ruta. Du kan vise hunden ruta kort."),
-                .order("Du sender hunden inn i ruta («fremad»)."),
+                .info("Start på anvist plass med hunden i utgangsstilling mot en av sidene på ruta. Du kan vise hunden ruta kort."),
+                .order("Du sender hunden inn i ruta.", order: "Kommander"),
                 .info("Du kommanderer «stå» når hunden er i ruta."),
                 .info("Når hunden har stått stille i ca. 2 sekunder, er øvelsen ferdig bedømt."),
                 .order("Du henter hunden i ruta.")
@@ -235,13 +241,13 @@ enum LPContent {
         ),
         LPExercise(
             number: "1.7", title: "Hopp over hinder", coefficient: 4,
-            summary: "Hunden blir igjen, og hopper over hinderet til deg når du kaller.",
+            summary: "Hunden skal hoppe over hinder på innkalling. Hinderet er tett, i hundens skulderhøyde, maks 50 cm.",
             commands: ["Fot", "Bli", "Hopp"],
             steps: [
-                .info("Hinderet er tett, i hundens skulderhøyde, maks 50 cm. Start i utgangsstilling vendt mot hinderet, 3–5 meter unna (ditt valg)."),
-                .order("Du kommanderer «bli» og går fra hunden, forbi hinderet på siden."),
-                .order("Du gjør helt om og holdt 3–5 meter bak hinderet (ditt valg)."),
-                .order("Du kaller inn hunden over hinderet til utgangsstilling.")
+                .info("Start i utgangsstilling vendt mot hinderet på anvist plass. Ca 3–5 meter unna hinder."),
+                .order("Du kommanderer «bli» og går fra hunden", order: "Kommander og gå fra"),
+                .order("Du gjør helt om og holdt på anvist plass, ca 3–5 meter bak hinderet.", order: "Helt om og holdt"),
+                .order("Du kaller inn hunden over hinderet til utgangsstilling.", order: "Kommander")
             ],
             judging: [
                 "Vegrer hunden én gang, er høyeste karakter 7. Andre vegring underkjenner.",
@@ -255,12 +261,12 @@ enum LPContent {
             summary: "Du skifter hundens stilling tre ganger fra 2 meters avstand.",
             commands: ["Utgangsstilling", "Sitt", "Dekk"],
             steps: [
-                .info("Start i utgangsstilling."),
-                .order("Du forlater hunden og gjør helt om og holdt på anvist plass, ca. 2 meter fra hunden."),
+                .info("Start på anvist plass med hunden i utgangsstilling."),
+                .order("Du forlater hunden og gjør helt om og holdt på anvist plass, ca. 2 meter fra hunden.", order: "Kommander og gå fra"),
                 .order("Konkurranselederen viser når hver stillingsforandring skal skje, og du kommanderer «sitt» eller «dekk». Hunden skifter stilling 3 ganger, og hver stilling holdes ca. 3 sekunder."),
                 .info("Siste stilling skal være dekk."),
-                .order("Du går inntil hunden."),
-                .order("Du kommanderer «utgangsstilling».")
+                .order("Du går inntil hunden.", order: "Gå inntil hunden"),
+                .order("Du kommanderer «utgangsstilling».", order: "Kommander utgangsstilling")
             ],
             judging: [
                 "Hvor raskt hunden skifter stilling, og hvor lite den flytter seg.",
@@ -292,11 +298,11 @@ enum LPContent {
             commands: ["Sitt"],
             steps: [
                 .info("Førerne stiller på linje med ca. 4 meter mellom ekvipasjene. Hundene sitter i utgangsstilling."),
-                .order("Du forlater hunden og går ca. 10 meter til anvist plass."),
-                .order("Du gjør helt om og holdt, vendt mot hunden."),
-                .info("Du står vendt mot hunden i 1 minutt. Tiden starter når alle førerne har nådd 10 meter og gjort helt om."),
-                .order("Du går tilbake og inntil hunden."),
-                .info("Etter «øvelsen er slutt» forholder du deg i ro til du får annen beskjed.")
+                .order("Du kommanderer hunden til å «bli» og går ca. 10 meter til anvist plass.", order: "Kommander og gå fra"),
+                .order("Du gjør helt om og holdt på anvist plass, vendt mot hunden.", order: "Helt om og holdt"),
+                .info("Du står vendt mot hunden i 1 minutt. Tiden starter når alle førerne står vendt mot hundene."),
+                .order("Du går tilbake og inntil hunden.", order: "Gå inntil hunden"),
+                .order("Etter «øvelsen er slutt» forholder du deg i ro til du får annen beskjed.", order: "Øvelsen er slutt")
             ],
             judging: [
                 "Hunden som ikke vil sitte, reiser seg, legger seg eller flytter seg mer enn 2 kroppslengder, underkjennes.",
@@ -309,9 +315,11 @@ enum LPContent {
             summary: "Fri ved fot uten line. Vanlig og sakte marsj, springmarsj, vendinger og holdt, og forflytninger på 2 skritt.",
             commands: ["Fot"],
             steps: [
-                .info("Start i utgangsstilling."),
-                .order("Du kommanderer «fot» og går marsj. «Fot» er tillatt fra holdt og ved forandring av gangart."),
-                .order("Du går vanlig og sakte marsj med vendinger og holdt, og springmarsj. Det bør også være vendinger under springmarsj."),
+                .info("Start på anvist plass med hunden i utgangsstilling."),
+                
+                .order("Du kommanderer «fot» og går vanlig marsj. «Fot» er tillatt fra holdt og ved forandring av gangart.", order: "Fremmad marsj"),
+
+                .order("Du går vanlig og sakte marsj med vendinger og holdt. Springmarsj kan også inneholde vendinger."),
                 .order("Øvelsen kan også inneholde forflytninger på 2 skritt, fremover og bakover."),
                 .info("Når du gjør holdt, skal hunden raskt innta utgangsstilling uten kommando."),
                 .info("Anbefalt tid: ca. 1 minutt.")
@@ -328,13 +336,13 @@ enum LPContent {
             summary: "Hunden stopper i stå eller dekk mens du fortsetter å gå, og du henter den igjen.",
             commands: ["Fot", "Stå eller dekk"],
             steps: [
-                .info("Dommeren avgjør om momentet er stå eller dekk, likt for alle."),
-                .order("Du kommanderer «fot» og går vanlig marsj ca. 10 meter."),
-                .order("Du kommanderer hunden til stå eller dekk, og fortsetter marsjen alene ca. 10 meter."),
-                .order("Du gjør helt om og holdt. Etter ca. 3 sekunder får du beskjed om å gå tilbake."),
-                .order("Du går tilbake og passerer hunden på dens venstre side, ca. 0,5 meter unna."),
-                .order("Du gjør helt om og marsj ca. 2 skritt bak hunden, går inntil den og tar den med fri ved fot."),
-                .order("Etter ca. 3 meters marsj gjør du holdt. Hunden skal automatisk innta utgangsstilling.")
+                .info("Start på anvist plass med hunden i utgangsstilling. Dommeren avgjør om momentet er stå eller dekk, likt for alle."),
+                .order("Du kommanderer «fot» og går vanlig marsj ca. 10 meter", order: "Fremmand marsj"),
+                .order("Du kommanderer hunden til stå eller dekk, og fortsetter marsjen alene ca. 10 meter.", order: "Kommander"),
+                .order("Du gjør helt om og holdt.", order: "Helt om og holdt"),
+                .order("Du går tilbake og passerer hunden på dens venstre side, ca. 0,5 meter unna.", order: "Gå forbi hunden"),
+                .order("Du gjør helt om og marsj ca. 2 skritt bak hunden, går inntil den og tar den med fri ved fot.", order: "Helt om"),
+                .order("Etter ca. 3 meters marsj gjør du holdt. Hunden skal automatisk innta utgangsstilling.", order: "Gjør holdt")
             ],
             judging: [
                 "Hunden skal stoppe raskt i riktig moment og innenfor 2 kroppslengder.",
@@ -348,11 +356,11 @@ enum LPContent {
             summary: "Innkalling over 20 meter, hvor hunden stoppes med «stå» underveis.",
             commands: ["Bli", "Kom", "Stå"],
             steps: [
-                .info("Start i utgangsstilling."),
-                .order("Du forlater den sittende hunden, går ca. 20 meter og gjør helt om og holdt på anvist plass."),
-                .order("Du kaller inn hunden («kom»)."),
+                .info("Start på anvist plass med hunden i utgangsstilling."),
+                .order("Du kommanderer «bli» og forlater den sittende hunden, går ca. 20 meter og gjør helt om og holdt på anvist plass.", order: "Kommander og gå fra"),
+                .order("Du kaller inn hunden.", order: "Kommander"),
                 .info("Før hunden har passert halve strekningen, kommanderer du «stå»."),
-                .order("Du kaller inn hunden til utgangsstilling.")
+                .order("Du kaller inn hunden til utgangsstilling.", order: "Kommander")
             ],
             judging: [
                 "Hunden skal komme villig, i god fart og ta korteste vei.",
@@ -363,15 +371,16 @@ enum LPContent {
         ),
         LPExercise(
             number: "2.5", title: "Fremadsending med dekk", coefficient: 4,
-            summary: "Du sender hunden 15 meter til ruta og legger den ned der.",
+            summary: "Du sender hunden 15 meter til ruta, deretter til å ligge i ruta. Ruta er ca. 3×3 meter, markert med kjegle i hvert hjørne, og ligger ca. 10 meter fra start.",
             commands: ["Fremad", "(Stå)", "Dekk", "Utgangsstilling"],
             steps: [
                 .info("Før øvelsen sier du fra til dommeren om du vil bruke «stå» før «dekk» i ruta, eller direkte «dekk»."),
-                .info("Ruta er 3×3 meter og ligger ca. 15 meter fra start. Du kan vise hunden ruta kort."),
-                .order("Du sender hunden inn i ruta («fremad»). Den skal gå i rett linje og inn i ruta fra fremsiden."),
+                .info("Start på anvist plass med hunden i utgangsstilling mot en av sidene på ruta. Du kan vise hunden ruta kort."),
+
+                .order("Du sender hunden inn i ruta.", order: "Kommander"),
                 .info("Du kommanderer «dekk» (eventuelt «stå» først) når hunden er i ruta."),
-                .order("Du går inntil hunden."),
-                .order("Du kommanderer «utgangsstilling».")
+                .order("Du går inntil hunden.", order: "Gå inntil hunden"),
+                .order("Du kommanderer «utgangsstilling».", order: "Kommander utgangsstilling")
             ],
             judging: [
                 "Maks 4 kommandoer for høyeste karakter (den fjerde er stå i ruta). Direkte dekk gir 3.",
@@ -385,13 +394,12 @@ enum LPContent {
             summary: "Hunden skifter mellom sitt og dekk fire ganger fra 5 meters avstand.",
             commands: ["Dekk", "Sitt", "Utgangsstilling"],
             steps: [
-                .info("Start i utgangsstilling."),
-                .order("Du kommanderer «dekk»."),
-                .order("Du forlater hunden og går til anvist plass ca. 5 meter unna."),
-                .order("Konkurranselederen viser når hver stillingsforandring skal skje. Rekkefølgen er sitt–dekk, og hunden skifter stilling 4 ganger. Hver stilling holdes ca. 3 sekunder."),
-                .info("Siste stilling skal være dekk."),
-                .order("Du går inntil hunden."),
-                .order("Du kommanderer «utgangsstilling».")
+                .info("Start på anvist plass med hunden i utgangsstilling."),
+                .order("Du kommanderer «dekk».", order: "Kommander"),
+                .order("Du forlater hunden og går til anvist plass ca. 5 meter unna.", order: "Gå fra"),
+                .order("Konkurranselederen viser når hver stillingsforandring skal skje. Rekkefølgen er sitt–dekk, og hunden skifter stilling 4 ganger. Hver stilling holdes ca. 3 sekunder. Siste stilling skal være dekk."),
+                .order("Du går inntil hunden.", order: "Gå inntil hunden"),
+                .order("Du kommanderer «utgangsstilling».", order: "Utgangsstilling")
             ],
             judging: [
                 "Hurtighet, tydelighet og hvor lite hunden beveger seg.",
@@ -402,14 +410,14 @@ enum LPContent {
         ),
         LPExercise(
             number: "2.7", title: "Apportering over hinder (lukket)", coefficient: 4,
-            summary: "Hunden apporterer over et lukket hinder og avleverer til deg.",
+            summary: "Hunden apporterer over et lukket hinder og avleverer til deg. Hinderet er tett, i hundens skulderhøyde, maks 50 cm.",
             commands: ["Bli", "Apport", "(Hopp)", "Avlever"],
             steps: [
-                .info("Hinderet er tett, i hundens skulderhøyde, maks 50 cm. Start i utgangsstilling vendt mot hinderet, ca. 7 meter unna."),
-                .order("Du kommanderer «bli», går ca. 1 meter fra hunden og legger ned apporten."),
-                .order("Du går videre på siden av hinderet og gjør helt om og holdt ca. 5 meter bak det."),
-                .order("Du kommanderer «apport». Hunden apporterer over hinderet til utgangsstilling."),
-                .order("Du kommanderer «avlever».")
+                .info("Start på anvist plass med hunden i utgangsstilling. Ca. 7 meter fra hinder."),
+                .order("Du kommanderer «bli», går ca. 1 meter fra hunden og legger ned apporten.", order: "Kommander og gå fra"),
+                .order("Du går videre på siden av hinderet og gjør helt om og holdt på anvist plass. Ca. 5 meter fra hinder.", order: "Helt om og holdt"),
+                .order("Du kommanderer hunden til å apportere over hinderet til utgangsstilling.", order: "Kommander"),
+                .order("Du kommanderer «avlever».", order: "Avlever")
             ],
             judging: [
                 "Hunden som ikke hopper hinderet, underkjennes.",
@@ -420,12 +428,11 @@ enum LPContent {
         ),
         LPExercise(
             number: "2.8", title: "Fremadsending rundt en gruppe kjegler og returnere", coefficient: 4,
-            summary: "Du sender hunden rundt en kjeglegruppe 10 meter unna, og den kommer tilbake til utgangsstilling.",
+            summary: "Du sender hunden rundt en kjeglegruppe 10 meter unna, og den kommer tilbake til utgangsstilling. 3–6 kjegler (40–50 cm høye) står samlet i et område på ca. 70–80 cm.",
             commands: ["Rundt"],
             steps: [
-                .info("3–6 kjegler (40–50 cm høye) står samlet i et område på ca. 70–80 cm, ca. 10 meter fra start. De plasseres før du står ved startpunktet."),
-                .info("Hunden står i utgangsstilling ved startpunktet. Du kan vise hunden kjeglene kort."),
-                .order("Du sender hunden rundt kjeglene («rundt»)."),
+                .info("Start på anvist plass med hunden i utgangsstilling. Du kan vise hunden kjeglene kort."),
+                .order("Du sender hunden rundt kjeglene.", order: "Kommander"),
                 .info("Hunden løper rundt kjeglene, tilbake til deg og tar utgangsstilling.")
             ],
             judging: [

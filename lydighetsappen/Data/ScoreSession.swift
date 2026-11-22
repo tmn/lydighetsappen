@@ -11,6 +11,8 @@ import Foundation
 
 struct ExerciseScore: Hashable {
     static let maxHalfGrade = 20
+    /// Karakterer som kan gis, i halve poeng: 0 og 5–10 med halve poeng imellom.
+    static let selectableHalfGrades = [0] + Array(10...20)
 
     var halfGrade: Int
     var isSkipped: Bool

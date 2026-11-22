@@ -23,18 +23,19 @@ struct ScoreScreen: View {
                                 path.append(id)
                             }
                         } label: {
-                            Label {
-                                VStack(alignment: .leading) {
-                                    Text(lpClass.title)
-                                        .foregroundStyle(.primary)
-                                    Text("\(lpClass.exercises.count) øvelser · maks \(lpClass.maxPoints) poeng")
-                                        .font(.subheadline)
-                                        .foregroundStyle(.secondary)
-                                }
-                            } icon: {
-                                Image(systemName: lpClass.systemImage)
+                            VStack(alignment: .leading) {
+                                Text(lpClass.title)
+                                    .font(.headline)
+
+                                Text("\(lpClass.exercises.count) øvelser · maks \(lpClass.maxPoints) poeng")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.leading)
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
                         }
+                        .buttonStyle(.plain)
                     }
                 } header: {
                     Text("Start ny økt")

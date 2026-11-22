@@ -14,52 +14,62 @@ struct ExerciseDetail: View {
     
     var body: some View {
         List {
-            Section {
-                summaryCard
-                    .listRowInsets(EdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6))
-                    .listRowBackground(Color.clear)
-            }
-            
-            
-            if !exercise.commands.isEmpty {
-                Section("Kommandoer") {
-                    ForEach(exercise.commands, id: \.self) { command in
-                        Label(command, systemImage: "person.wave.2")
-                    }
-                }
-            }
-            
-            Section {
-                ForEach(Array(exercise.steps.enumerated()), id: \.offset) { index, step in
-                    HStack(alignment: .firstTextBaseline) {
-                        Text("\(index + 1).")
-                            .monospacedDigit()
-                            .foregroundStyle(.secondary)
-                        VStack(alignment: .leading, spacing: 2) {
-                            if step.isOrdered {
-                                Text(step.orderLabel)
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundStyle(.tint)
-                            }
-
-                            Text(step.text)
-                        }
-                    }
-                }
-            } header: {
-                Text("Slik utføres øvelsen")
-            } footer: {
-                Text("«På ordre» betyr at konkurranselederen gir beskjed før du gjør handlingen. Vent på ordren om konkurranseleder ikke har sagt noe annet.")
-            }
-            
-            Section("Dommeren legger vekt på") {
-                ForEach(exercise.judging, id: \.self) { point in
-                    Text(point)
-                }
-            }
+            ExerciseDetailSections(exercise: exercise)
         }
         .navigationTitle(exercise.title)
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+/// Innholdet i øvelsesdetaljene (sammendrag, kommandoer, utførelse og dommerens vektlegging).
+/// Skal ligge i en `List`. Brukes også av poengøkta.
+struct ExerciseDetailSections: View {
+    let exercise: LPExercise
+    
+    var body: some View {
+        Section {
+            summaryCard
+                .listRowInsets(EdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6))
+                .listRowBackground(Color.clear)
+        }
+        
+        
+        if !exercise.commands.isEmpty {
+            Section("Kommandoer") {
+                ForEach(exercise.commands, id: \.self) { command in
+                    Label(command, systemImage: "person.wave.2")
+                }
+            }
+        }
+        
+        Section {
+            ForEach(Array(exercise.steps.enumerated()), id: \.offset) { index, step in
+                HStack(alignment: .firstTextBaseline) {
+                    Text("\(index + 1).")
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        if step.isOrdered {
+                            Text(step.orderLabel)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.tint)
+                        }
+
+                        Text(step.text)
+                    }
+                }
+            }
+        } header: {
+            Text("Slik utføres øvelsen")
+        } footer: {
+            Text("«På ordre» betyr at konkurranselederen gir beskjed før du gjør handlingen. Vent på ordren om konkurranseleder ikke har sagt noe annet.")
+        }
+        
+        Section("Dommeren legger vekt på") {
+            ForEach(exercise.judging, id: \.self) { point in
+                Text(point)
+            }
+        }
     }
     
     private var summaryCard: some View {

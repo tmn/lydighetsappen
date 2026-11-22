@@ -25,6 +25,10 @@ struct MainScreen: View {
             Tab("Fot", systemImage: "pawprint") {
                 FotScreen()
             }
+
+            Tab("Konkurranse", systemImage: "list.clipboard") {
+                ScoreScreen()
+            }
             
             Tab {
                 BrowseScreen()
